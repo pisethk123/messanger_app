@@ -8,6 +8,6 @@ router
 .post("/signup", signUp)
 .post("/signin", signIn)
 .get("/isloggedin", isAuthenticated, isLoggedin)
-.post("/logout", logOut)
+.get("/logout", logOut)
 
 export default router

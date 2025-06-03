@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { PiEyeSlashLight } from "react-icons/pi";
 import { IoEyeOutline } from "react-icons/io5";
-import toast from 'react-hot-toast';
-import { useSignInMutation } from '../redux/services/apis/authApi';
+import useSignIn from '../hooks/useSignIn';
 
 const SignIn = () => {
   const [showPassword, setShowPassword] = useState(false)
@@ -12,9 +11,7 @@ const SignIn = () => {
     password: ""
   })
 
-  const [signIn, {isLoading, isError, error, isSuccess}] = useSignInMutation()
-
-  const navigate = useNavigate()
+  const { signIn, loading } = useSignIn()
 
   const showPasswordHander = () => {
     setShowPassword(!showPassword)
@@ -28,16 +25,6 @@ const SignIn = () => {
     e.preventDefault()
     signIn(userData)
   }
-
-  useEffect(() => {
-    if(isSuccess) {
-      toast.success("Login success")
-      navigate("/chat")
-    }
-    if(isError) {
-      toast.error(error.data.message)
-    }
-  }, [isError, isSuccess])
 
   return (
     <div className='pt-14'>
@@ -62,8 +49,8 @@ const SignIn = () => {
             </div>
           </div>
           {/* submit button */}
-          <button type="submit" onClick={submitHandler} className={`${isLoading? "bg-blue-300": "bg-blue-400"} text-white w-full text-center py-2 rounded-md`} disabled={isLoading}>
-            { isLoading ? "Loading" : "Sign In" }
+          <button type="submit" onClick={submitHandler} className={`${loading? "bg-blue-300": "bg-blue-400"} text-white w-full text-center py-2 rounded-md`} disabled={loading}>
+            { loading ? "Loading" : "Sign In" }
           </button>
         </form>
       </div>

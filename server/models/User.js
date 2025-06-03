@@ -17,7 +17,7 @@ const userSchema = mongoose.Schema({
         minlength: 8
     },
     avatar: String
-})
+}, {timestamps: true})
 
 userSchema.pre("save", async function (next) {
     if(!this.isModified("password")) return next()

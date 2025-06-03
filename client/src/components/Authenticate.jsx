@@ -1,10 +1,12 @@
 import { Navigate, Outlet } from "react-router-dom"
-import { useIsLoggedinQuery } from "../redux/services/apis/authApi"
+import useAuthenticate from "../hooks/useAuthenticate"
+
 
 const Authenticate = () => {
-    const {isSuccess, isLoading} = useIsLoggedinQuery()
-    if(isLoading) return <p>Loading...</p>
-  return isSuccess? <Outlet/> : <Navigate to="/signin" replace/>
+  const { isAuthenticated, loading } = useAuthenticate()
+    
+  if(loading) return null
+  return isAuthenticated? <Outlet/>: <Navigate to="/signin" replace={true} />
 }
 
 export default Authenticate

@@ -1,32 +1,16 @@
-import React, { useEffect, useState } from 'react'
-import { useLogOutMutation } from '../redux/services/apis/authApi'
-import toast from 'react-hot-toast'
-import { useNavigate } from 'react-router-dom'
-import { useGetUserProfileQuery, useUpdateUserProfileImageMutation } from '../redux/services/apis/userApi'
+import { useEffect, useState } from 'react'
+import { useLogOut } from '../hooks/useLogOut'
+import useGetUserProfile from '../hooks/useGetUserProfile'
+import useUpdateUserProfileImage from '../hooks/useUpdateProfileImage'
+
+const previewImage = "https://img.freepik.com/premium-vector/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-vector-illustration_561158-3407.jpg?w=360"
 
 const Profile = () => {
-  const previewImage = "https://img.freepik.com/premium-vector/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-vector-illustration_561158-3407.jpg?w=360"
-
   const [file, setFile] = useState(null)
-  const navigate = useNavigate()
 
-  const {data} = useGetUserProfileQuery()
-  const [logOut, {isError, isSuccess, isLoading}] = useLogOutMutation()
-  const [updateUserProfileImage] = useUpdateUserProfileImageMutation()
-  
-  const logoutHandler = () => {
-    logOut()
-  }
-
-  useEffect(() => {
-    if(isSuccess) {
-      toast.success("user logged out")
-      navigate("/")
-    }
-    if(isError) {
-      toast.error("An error occured")
-    }
-  }, [isError, isSuccess])
+  const { logOut, loading } = useLogOut()
+  const {data, refetch} = useGetUserProfile()
+  const { updateProfileImage } = useUpdateUserProfileImage()
 
   const inputChangeHandler = (e) => {
     if(e.target.files[0]) {
@@ -35,12 +19,16 @@ const Profile = () => {
   }
 
   useEffect(() => {
-    if(file) {
-      const formData = new FormData()
-      formData.append("file", file)
-      updateUserProfileImage(formData)
-      console.log(formData)
+    const uploadImage = async () => {
+      if(file) {
+        const formData = new FormData()
+        formData.append("file", file)
+        await updateProfileImage(formData)
+        refetch()
+      }
     }
+
+    uploadImage()
   }, [file])
 
   return (
@@ -70,8 +58,8 @@ const Profile = () => {
           <p>{data?.username}</p>
         </div>
         {/* logout button */}
-        <button type="button" className="bg-red-600 text-white w-full py-2 rounded-md" disabled={isLoading} onClick={logoutHandler}>
-          {isLoading? "Loading...": "Log out"}
+        <button type="button" className="bg-red-600 text-white w-full py-2 rounded-md" disabled={loading} onClick={logOut}>
+          {loading? "Loading...": "Log out"}
         </button>
       </div>
     </div>
