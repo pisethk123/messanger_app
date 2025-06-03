@@ -18,16 +18,16 @@ const Profile = () => {
     }
   }
 
-  useEffect(() => {
-    const uploadImage = async () => {
-      if(file) {
-        const formData = new FormData()
-        formData.append("file", file)
-        await updateProfileImage(formData)
-        refetch()
-      }
+  const uploadImage = async () => {
+    if(file) {
+      const formData = new FormData()
+      formData.append("file", file)
+      await updateProfileImage(formData)
+      refetch()
     }
+  }
 
+  useEffect(() => {
     uploadImage()
   }, [file])
 
